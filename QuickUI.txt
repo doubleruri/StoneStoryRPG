@@ -1,0 +1,49 @@
+
+/* 
+  製 做 Panel Button Text 的 function
+  減 少 程 式 碼
+  color,tcolor,bcolor,style,text,align,onPressedFn
+  不 另 外 設 定 就 打 null
+  MakePanel(x, y, w, h, color, style)
+  MakeButton
+  (x,y,w,h, text, tcolor,bcolor,style,onPressedFn)
+  MakeText(x, y, w, h, color, align)
+*/
+
+func MakePanel(x, y, w, h, color, style)
+  var panel = ui.AddPanel()
+  panel.x = x
+  panel.y = y
+  panel.w = w
+  panel.h = h 
+  panel.anchor = top_left
+  panel.dock = top_left
+  ?color ! null
+    panel.color = color
+  ?style ! null
+    panel.style = style
+  return panel
+
+func MakeButton(x,y,w,h,text,tcolor,bcolor, 
+^style, onPressedFn)
+  var btn = ui.AddButton()
+  btn.x = x
+  btn.y = y
+  btn.w = w
+  btn.h = h
+  btn.anchor = top_left
+  btn.dock = top_left
+  ?text ! null
+    btn.text = text
+  :
+    btn.text = ＂＂
+  ?tcolor ! null
+    btn.tcolor = tcolor
+  ?bcolor ! null
+    btn.bcolor = bcolor
+  ?style ! null
+    btn.style = style
+  ?onPressedFn ! null
+    btn.SetPressed(onPressedFn)
+  btn.visible = inherit
+  return btn
