@@ -1,0 +1,28 @@
+//將 MapWeapon() 放在要觸發的場景
+// 依據觸發的鏡頭向前轉，發動完重置鏡頭
+// 使用screen.Next()，screen.x表示現在畫面上最右邊繪製的是第幾格
+// 除出發點(screen.i = 0)外，一個場景會有69格
+//screen.i 1 = screen.x = 69 完整移動要34次，時間是68frame
+
+//定義變數紀錄目前正在執行哪裡 stop forward backward
+//Set state by variable screenMoving = "stop"/"forward"/"backward"
+
+var screenMoving = "stop"
+func MapWeapon(delayTime)
+  ? screenMoving = "stop"
+    screen.Next()
+    screenMoving = "forward"
+    return
+  ? screenMoving = "forward"
+    ? screen.x = (screen.i + 1) * 69 -3
+        equip blade
+        activate R
+      screen.ResetOffset()
+      screenMoving = "backward"
+    return
+  ? screenMoving = "backward"
+    return
+
+//重置變數 reset Variable
+?loc.begin | loc.loop
+  screenMoving = "stop"
