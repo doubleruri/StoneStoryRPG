@@ -8,7 +8,7 @@
 //Set state by variable screenMoving = "stop"/"forward"/"backward"
 
 var screenMoving = "stop"
-func MapWeapon(delayTime)
+func MapWeapon()
   ? screenMoving = "stop"
     screen.Next()
     screenMoving = "forward"
