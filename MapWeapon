@@ -7,22 +7,19 @@
 //定義變數紀錄目前正在執行哪裡 stop forward backward
 //Set state by variable screenMoving = "stop"/"forward"/"backward"
 
-var screenMoving = "stop"
+var screenMoving = "wait"
 func MapWeapon()
-  ? screenMoving = "stop"
-    screen.Next()
-    screenMoving = "forward"
-    return
-  ? screenMoving = "forward"
+  ? screenMoving = "wait"
+    ? item.GetCooldown("blade") = 0
+      screen.Next()
+      screenMoving = ＂forward＂
+  :? screenMoving = ＂forward＂
     ? screen.x = (screen.i + 1) * 69 -3
-        equip blade
-        activate R
+      equip blade
+      activate R
       screen.ResetOffset()
-      screenMoving = "backward"
-    return
-  ? screenMoving = "backward"
-    return
+      screenMoving = ＂wait＂
 
 //重置變數 reset Variable
 ?loc.begin | loc.loop
-  screenMoving = "stop"
+  screenMoving = "wait"
