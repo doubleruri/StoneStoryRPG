@@ -72,20 +72,14 @@ func MakeText(x,y,w,h,color,align)
       txt.align = left
   return txt
 
-/* 螢幕共87:27格
-  MakePanel(x, y, w, h, color, style)
-  MakeButton
-  (x,y,w,h, text, tcolor,bcolor,style,onPressedFn)
-  MakeText(x, y, w, h, color, align)
-*/
-
-
 var TextMode
 var PPL_Info
 var MOB_Info
 var Area_Info
 var TextModeMinMax
 var textModeMinimize = true
+var screenW = screen.w
+var screenH = screen.h
 
 //PPL_Info
 var PPL_Info_HP
@@ -160,11 +154,11 @@ var loopRound = 0
 
 func Build_TextMode()
   TextMode = MakePanel
-^(0,0,85,27,#DDBFEC,1)
+^(0,0,screenW,screenH,#DDBFEC,1)
   TextMode.visible = false
 
   PPL_Info = MakePanel
-^(1,1,41,19,#A9A9A9,1)
+^(1,1,screenW/2-1,19,#A9A9A9,1)
   PPL_Info.visible = inherit
 
   PPL_Info_HP = MakeText(2,4,12,1,#red,L)
@@ -184,7 +178,7 @@ func Build_TextMode()
   PPL_Info.Add(PPL_Info_Armor)
 
   MOB_Info = MakePanel
-^(43,1,41,19,#A9A9A9,1)
+^(screenW/2,1,screenW/2-1,19,#A9A9A9,1)
   MOB_Info.visible = inherit
 
   MOB_Info_ID = MakeText(2,2,MOB_Info.w -2,2,#white,c)
@@ -201,11 +195,11 @@ func Build_TextMode()
   MOB_Info.Add(MOB_Info_Debuff)
   
   Area_Info = MakePanel
-^(1,20,83,6,#A9A9A9,4)
+^(1,20,screenW-2,screenH-21,#A9A9A9,4)
   Area_Info.visible = inherit
   
   TextModeMinMax = MakeButton
-^(40,25,5,2,＂◢═▼═◣＂,#888800,#000000,0,TxtPanelMinMax)
+^(screenW/2-2,screenH,5,2,＂◢═▼═◣＂,#888800,#000000,0,TxtPanelMinMax)
 
   Area_Info_Data = MakeText
 ^(1, 1, 50, 2, #888888, L)
@@ -220,6 +214,11 @@ func Build_TextMode()
 ^(21, 2, 20, 1, #888888, L)
   Area_Info_Rune5= MakeText
 ^(21, 3, 20, 1, #888888, L)
+  Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune")
+  Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune")
+  Area_Info_Rune3.text = "* " + item.GetCount("aether rune")
+  Area_Info_Rune4.text = "φ " + item.GetCount("fire rune")
+  Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune")
 
   Area_Info_Res1 = MakeText
 ^(45, 2, 20, 1, #888888, L)
@@ -233,6 +232,11 @@ func Build_TextMode()
 ^(64, 3, 20, 1, #888888, L)
   Area_Info_Box = MakeText
 ^(64, 4, 20, 1, #888888, L)
+  Area_Info_Res1.text = "石 " + res.stone
+  Area_Info_Res2.text = "木 " + res.wood
+  Area_Info_Res3.text = "油 " + res.tar
+  Area_Info_Res4.text = "銅 " + res.bronze
+  Area_Info_Res5.text = "氣 " + res.ki
 
   TextMode.Add(PPL_Info)
   TextMode.Add(MOB_Info)
@@ -300,8 +304,8 @@ func Show_TextMode_Data()
   ?item.right = blade | item.right = bardiche | item.right = skeleton_arm | item.right = heavy_hammer | item.right = quarterstaff
     PPL_L_Equipment.text = " 雙 手 武 器"
   :
-    PPL_L_Equipment.text =PPL_L_Name + "\n 攻擊 " + PPL_L_State2 + "\n 硬直 " + PPL_L_State3 + "\n 4? " + PPL_L_State4
-  PPL_R_Equipment.text =PPL_R_Name + "\n 攻擊 " + PPL_R_State2 + "\n 硬直 " + PPL_R_State3 + "\n 4? " + PPL_L_State4
+    PPL_L_Equipment.text =PPL_L_Name + "\n 攻擊 " + PPL_L_State2 + " 硬直 " + PPL_L_State3 + " 休息 " + PPL_L_State4
+  PPL_R_Equipment.text =PPL_R_Name + "\n 攻擊 " + PPL_R_State2 + " 硬直 " + PPL_R_State3 + " 休息 " + PPL_L_State4
   PPL_Info_HP.text =  "HP " + hp + " / " + maxhp
   PPL_Info_Armor.text = "護盾 " + armor + "."  + armor.f + " / " + maxarmor
   MOB_Info_ID.text = " " + foe.id
@@ -311,72 +315,53 @@ func Show_TextMode_Data()
   MOB_Info_Buff.text = "增益:\n" + foe.buffs.string
   MOB_Info_Debuff.text = "減益:\n" + foe.debuffs.string
 
-  Area_Info_Data.text = area_Here  + area_Screen +" " + area_Time + "  敵量 " + foe.GetCount(138)
+  Area_Info_Data.text = area_Here  + " "+area_Screen +" " + area_Time + "  敵數量 " + foe.GetCount(138)
 
   ? poisonRune_Got > 0
     Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune") + "([color=green]+" + poisonRune_Got + "[/color])"
   :? poisonRune_Got < 0
     Area_Info_Rune1.text  = "∞ " + item.GetCount("poison rune") + "([color=red]" + poisonRune_Got + "[/color])"
-  :
-    Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune")
+    
   ? vigorRune_Got > 0
     Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=green]+" + vigorRune_Got + "[/color])"
   :? vigorRune_Got < 0
     Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=red]" + vigorRune_Got + "[/color])"
-  :
-    Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune")
   ? aetherRune_Got > 0
     Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=green]+" + aetherRune_Got + "[/color])"
   :? aetherRune_Got < 0
     Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=red]" + aetherRune_Got  + "[/color])"
-  :
-    Area_Info_Rune3.text = "* " + item.GetCount("aether rune")
   ? fireRune_Got > 0
     Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=green]+" + fireRune_Got + "[/color])"
   :? fireRune_Got < 0
     Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=red]" + fireRune_Got + "[/color])" 
-  :
-    Area_Info_Rune4.text = "φ " + item.GetCount("fire rune")
   ? iceRune_Got > 0
     Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune") + "([color=green]+" + iceRune_Got + "[/color])"
   :? iceRune_Got < 0
     Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune") + "([color=red]" + iceRune_Got + "[/color])"
-  :
-    Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune")
 
   ?res1_Got > 0
     Area_Info_Res1.text = "石 " + res.stone + "([color=green]+" + res1_Got + "[/color])"
   :?res1_Got < 0
     Area_Info_Res1.text = "石 " + res.stone + "([color=red]" + res1_Got + "[/color])"
-  :
-    Area_Info_Res1.text = "石 " + res.stone
   ?res2_Got > 0
     Area_Info_Res2.text = "木 " + res.wood + "([color=green]+" + res2_Got + "[/color])"
   :?res2_Got < 0
     Area_Info_Res2.text = "木 " + res.wood + "([color=red]" + res2_Got + "[/color])"
-  :
-    Area_Info_Res2.text = "木 " + res.wood
 
   ?res3_Got > 0
     Area_Info_Res3.text = "油 " + res.tar + "([color=green]+" + res3_Got + "[/color])"
   :?res3_Got < 0
     Area_Info_Res3.text = "油 " + res.tar + "([color=red]" + res3_Got + "[/color])"
-  :
-    Area_Info_Res3.text = "油 " + res.tar
 
   ?res4_Got > 0
     Area_Info_Res4.text = "銅 " + res.bronze + "([color=green]+" + res4_Got +"[/color])"
   :?res4_Got < 0
     Area_Info_Res4.text = "銅 " + res.bronze + "([color=red]" + res4_Got +"[/color])"
-  :
-    Area_Info_Res4.text = "銅 " + res.bronze
 
   ?res5_Got > 0
     Area_Info_Res5.text = "氣 " + res.ki + "([color=green]+" + res5_Got + "[/color])"
   :?res5_Got < 0
     Area_Info_Res5.text = "氣 " + res.ki + "([color=red]" + res5_Got + "[/color])"
-  :
-    Area_Info_Res5.text = "氣 " + res.ki
 
   ?boxGot > 0
     Area_Info_Box.text = "寶 " + boxNow + "/" + boxLimit + "([color=green]+" + boxGot + "[/color])"
