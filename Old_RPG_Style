@@ -199,7 +199,7 @@ func Build_TextMode()
   Area_Info.visible = inherit
   
   TextModeMinMax = MakeButton
-^(screenW/2-2,screenH,5,2,＂◢═▼═◣＂,#888800,#000000,0,TxtPanelMinMax)
+^(screenW/2-2,screenH-2,5,2,＂\n◢═▲═◣＂,#888800,#000000,0,TxtPanelMinMax)
 
   Area_Info_Data = MakeText
 ^(1, 1, 50, 2, #888888, L)
@@ -258,10 +258,10 @@ func Build_TextMode()
 func TxtPanelMinMax()
   textModeMinimize = !textModeMinimize
   ?textModeMinimize = true
-    TextModeMinMax.text = ＂◢═▲═◣＂
+    TextModeMinMax.text = ＂◢═▼═◣＂
     TextMode.visible = true
   :
-    TextModeMinMax.text = ＂◥═▼═◤＂
+    TextModeMinMax.text = ＂◥═▲═◤＂
     TextMode.visible = false
 
 
@@ -321,19 +321,22 @@ func Show_TextMode_Data()
     Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune") + "([color=green]+" + poisonRune_Got + "[/color])"
   :? poisonRune_Got < 0
     Area_Info_Rune1.text  = "∞ " + item.GetCount("poison rune") + "([color=red]" + poisonRune_Got + "[/color])"
-    
+	
   ? vigorRune_Got > 0
     Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=green]+" + vigorRune_Got + "[/color])"
   :? vigorRune_Got < 0
     Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=red]" + vigorRune_Got + "[/color])"
+
   ? aetherRune_Got > 0
     Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=green]+" + aetherRune_Got + "[/color])"
   :? aetherRune_Got < 0
     Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=red]" + aetherRune_Got  + "[/color])"
+
   ? fireRune_Got > 0
     Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=green]+" + fireRune_Got + "[/color])"
   :? fireRune_Got < 0
     Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=red]" + fireRune_Got + "[/color])" 
+
   ? iceRune_Got > 0
     Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune") + "([color=green]+" + iceRune_Got + "[/color])"
   :? iceRune_Got < 0
@@ -343,6 +346,7 @@ func Show_TextMode_Data()
     Area_Info_Res1.text = "石 " + res.stone + "([color=green]+" + res1_Got + "[/color])"
   :?res1_Got < 0
     Area_Info_Res1.text = "石 " + res.stone + "([color=red]" + res1_Got + "[/color])"
+
   ?res2_Got > 0
     Area_Info_Res2.text = "木 " + res.wood + "([color=green]+" + res2_Got + "[/color])"
   :?res2_Got < 0
@@ -409,8 +413,8 @@ func CheckWeaponAttritube()
 //put this to build UI once and record resource
 ?loc.begin | loc.loop
   Build_TextMode()
-  CheckResource()
   TxtPanelMinMax()
+  CheckResource()
   PPL_L_Name = item.left
   PPL_R_Name = item.right
   loopRound++
