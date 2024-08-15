@@ -1,15 +1,12 @@
 // Custom position coolingdown timer
 // Usage :
-//   import CoolingTime_Bar
+//   var CDTimer = import CoolingTime_Bar
 //   ?loc.begin | loc.loop
-//     Build_CoolingDown_Bar(X,Y) //X,Y = where you want to put,UL corner
+//     CDTimer.Build_CoolingDown_Bar(X,Y) //X,Y = where you want to put,UL corner
 //
 // Put below at Main Loop
-//   Update_CDTime()
-
-
+//   CDTimer.Update_CDTime()
 //------Cooling Time bar------//
-
 var CDPanel
 var CDPanel_ShowTime
 var CDPanel_MinMax
@@ -48,7 +45,8 @@ var Skill_CDNameList = ［
 ］
 var Tick_UpdateCD = 3
 
-//UI quick Make Function//
+
+
 func MakePanel(x, y, w, h, color, style)
   var panel = ui.AddPanel()
   panel.x = x
