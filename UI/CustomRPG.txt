@@ -1,0 +1,426 @@
+// Put below in script
+// Usage:
+//   Var component
+//   component = fn()
+/* 
+  製 做 Panel Button Text 的 function
+  減 少 程 式 碼
+  color,tcolor,bcolor,style,text,align,onPressedFn
+  不 另 外 設 定 就 打 null
+  MakePanel(x, y, w, h, color, style)
+  MakeButton
+  (x,y,w,h, text, tcolor,bcolor,style,onPressedFn)
+  MakeText(x, y, w, h, color, align)
+*/
+
+func MakePanel(x, y, w, h, color, style)
+  var panel = ui.AddPanel()
+  panel.x = x
+  panel.y = y
+  panel.w = w
+  panel.h = h 
+  panel.anchor = top_left
+  panel.dock = top_left
+  ?color ! null
+    panel.color = color
+  ?style ! null
+    panel.style = style
+  return panel
+
+func MakeButton(x,y,w,h,text,tcolor,bcolor, 
+^style, onPressedFn)
+  var btn = ui.AddButton()
+  btn.x = x
+  btn.y = y
+  btn.w = w
+  btn.h = h
+  btn.anchor = top_left
+  btn.dock = top_left
+  ?text ! null
+    btn.text = text
+  :
+    btn.text = ""
+  ?tcolor ! null
+    btn.tcolor = tcolor
+  ?bcolor ! null
+    btn.bcolor = bcolor
+  ?style ! null
+    btn.style = style
+  ?onPressedFn ! null
+    btn.SetPressed(onPressedFn)
+  btn.visible = inherit
+  return btn
+func MakeText(x,y,w,h,color,align)
+  var txt = ui.AddText()
+  txt.x = x
+  txt.y = y
+  txt.w = w
+  txt.h = h
+  txt.anchor = top_left
+  txt.dock = top_left
+  txt.text = ""
+  ?color ! null
+    txt.color = color
+  ?align ! null
+    ?align = "L"
+      txt.align = left
+    :?align = "R"
+      txt.align = right
+    :?align = "C"
+      txt.align = center
+    :
+      txt.align = left
+  return txt
+
+var TextMode
+var PPL_Info
+var MOB_Info
+var Area_Info
+var TextModeMinMax
+var textModeMinimize = true
+var screenW = screen.w
+var screenH = screen.h
+
+//PPL_Info
+var PPL_Info_HP
+var PPL_Info_Armor
+var PPL_L_Equipment
+var PPL_R_Equipment
+var PPL_L_Name
+var PPL_R_Name
+var PPL_L_State2 = 0
+var PPL_L_State3 = 0
+var PPL_L_State4 = 0
+var PPL_R_State2 = 0
+var PPL_R_State3 = 0
+var PPL_R_State4 = 0
+
+
+//MOB_Info
+var MOB_Info_ID
+var MOB_Info_HP
+var MOB_Info_Armor
+var MOB_Info_ATK
+var MOB_Info_Buff
+var MOB_Info_Debuff
+
+
+
+//Area_Info
+
+var Area_Info_Data
+var Area_Info_Res1
+var Area_Info_Res2
+var Area_Info_Res3
+var Area_Info_Res4
+var Area_Info_Res5
+var Area_Info_Rune1
+var Area_Info_Rune2
+var Area_Info_Rune3
+var Area_Info_Rune4
+var Area_Info_Rune5
+var Area_Info_Box
+var area_Here
+var area_Screen
+var area_Time
+var area_Resourse
+var area_TotalResourse
+var boxNow
+var boxLimit
+var boxGot = 0
+var boxBefore
+var res1_Before
+var res2_Before
+var res3_Before
+var res4_Before
+var res5_Before
+var res1_Got = 0
+var res2_Got = 0
+var res3_Got = 0
+var res4_Got = 0
+var res5_Got = 0
+var poisonRune_Before
+var vigorRune_Before
+var aetherRune_Before
+var fireRune_Before
+var iceRune_Before
+var poisonRune_Got = 0
+var vigorRune_Got = 0
+var aetherRune_Got = 0
+var fireRune_Got = 0
+var iceRune_Got = 0
+var resourceRecord = false
+var loopRound = 0
+
+func Build_TextMode()
+  TextMode = MakePanel
+^(0,0,screenW,screenH,#DDBFEC,1)
+  TextMode.visible = false
+
+  PPL_Info = MakePanel
+^(1,1,screenW/2-1,19,#A9A9A9,1)
+  PPL_Info.visible = inherit
+
+  PPL_Info_HP = MakeText(2,4,12,1,#red,L)
+  PPL_Info_Armor = MakeText(2,5,12,1,#blue,L)
+  
+  PPL_L_Equipment = MakeText
+^(1,9,20,9,#A9A9A9,L)
+  PPL_L_Equipment.visible = inherit
+
+  PPL_R_Equipment = MakeText
+^(21,9,20,9,#A9A9A9,L)
+  PPL_L_Equipment.visible = inherit
+
+  PPL_Info.Add(PPL_L_Equipment)
+  PPL_Info.Add(PPL_R_Equipment)
+  PPL_Info.Add(PPL_Info_HP)
+  PPL_Info.Add(PPL_Info_Armor)
+
+  MOB_Info = MakePanel
+^(screenW/2,1,screenW/2-1,19,#A9A9A9,1)
+  MOB_Info.visible = inherit
+
+  MOB_Info_ID = MakeText(2,2,MOB_Info.w -2,2,#white,c)
+  MOB_Info_HP = MakeText(2,4,10,1,#red,L)
+  MOB_Info_Armor = MakeText(2,5,10,1,#blue,L)
+  MOB_Info_ATK = MakeText(2,6,10,1,#green,L)
+  MOB_Info_Buff = MakeText(2,8,30,6,#green,L)
+  MOB_Info_Debuff= MakeText(2,13,30,6,#green,L)
+  MOB_Info.Add(MOB_Info_ID)
+  MOB_Info.Add(MOB_Info_HP)
+  MOB_Info.Add(MOB_Info_Armor)
+  MOB_Info.Add(MOB_Info_ATK)
+  MOB_Info.Add(MOB_Info_Buff)
+  MOB_Info.Add(MOB_Info_Debuff)
+  
+  Area_Info = MakePanel
+^(1,20,screenW-2,screenH-21,#A9A9A9,4)
+  Area_Info.visible = inherit
+  
+  TextModeMinMax = MakeButton
+^(screenW/2-2,screenH-2,5,2,＂\n◢═▲═◣＂,#888800,#000000,0,TxtPanelMinMax)
+
+  Area_Info_Data = MakeText
+^(1, 1, 50, 2, #888888, L)
+
+  Area_Info_Rune1 = MakeText
+^(1, 2, 20, 1, #888888, L)
+  Area_Info_Rune2 = MakeText
+^(1, 3, 20, 1, #888888, L)
+  Area_Info_Rune3 = MakeText
+^(1, 4, 20, 1, #888888, L)
+  Area_Info_Rune4 = MakeText
+^(21, 2, 20, 1, #888888, L)
+  Area_Info_Rune5= MakeText
+^(21, 3, 20, 1, #888888, L)
+  Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune")
+  Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune")
+  Area_Info_Rune3.text = "* " + item.GetCount("aether rune")
+  Area_Info_Rune4.text = "φ " + item.GetCount("fire rune")
+  Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune")
+
+  Area_Info_Res1 = MakeText
+^(45, 2, 20, 1, #888888, L)
+  Area_Info_Res2 = MakeText
+^(45, 3, 20, 1, #888888, L)
+  Area_Info_Res3 = MakeText
+^(45, 4, 20, 1, #888888, L)
+  Area_Info_Res4 = MakeText
+^(64, 2, 20, 1, #888888, L)
+  Area_Info_Res5 = MakeText
+^(64, 3, 20, 1, #888888, L)
+  Area_Info_Box = MakeText
+^(64, 4, 20, 1, #888888, L)
+  Area_Info_Res1.text = "石 " + res.stone
+  Area_Info_Res2.text = "木 " + res.wood
+  Area_Info_Res3.text = "油 " + res.tar
+  Area_Info_Res4.text = "銅 " + res.bronze
+  Area_Info_Res5.text = "氣 " + res.ki
+
+  TextMode.Add(PPL_Info)
+  TextMode.Add(MOB_Info)
+  TextMode.Add(Area_Info)
+  Area_Info.Add(Area_Info_Data)
+  Area_Info.Add(Area_Info_Res1)
+  Area_Info.Add(Area_Info_Res2)
+  Area_Info.Add(Area_Info_Res3)
+  Area_Info.Add(Area_Info_Res4)
+  Area_Info.Add(Area_Info_Res5)
+  Area_Info.Add(Area_Info_Rune1)
+  Area_Info.Add(Area_Info_Rune2)
+  Area_Info.Add(Area_Info_Rune3)
+  Area_Info.Add(Area_Info_Rune4)
+  Area_Info.Add(Area_Info_Rune5)
+  Area_Info.Add(Area_Info_Box)
+
+
+func TxtPanelMinMax()
+  textModeMinimize = !textModeMinimize
+  ?textModeMinimize = true
+    TextModeMinMax.text = ＂◢═▼═◣＂
+    TextMode.visible = true
+  :
+    TextModeMinMax.text = ＂◥═▲═◤＂
+    TextMode.visible = false
+
+
+func CheckResource()
+  ?resourceRecord = false
+    boxBefore = item.GetTreasureCount()
+    boxNow = item.GetTreasureCount()
+    boxLimit = item.GetTreasureLimit()
+    res1_Before = res.stone
+    res2_Before = res.wood
+    res3_Before = res.tar
+    res4_Before = res.bronze
+    res5_Before = res.ki
+    poisonRune_Before = item.GetCount("poison rune")
+    vigorRune_Before = item.GetCount("vigor rune")
+    aetherRune_Before = item.GetCount("aether rune")
+    fireRune_Before = item.GetCount("fire rune")
+    iceRune_Before  = item.GetCount("ice rune")
+    resourceRecord = true
+  :
+    boxNow = item.GetTreasureCount()
+    boxLimit = item.GetTreasureLimit()
+    boxGot = boxNow - boxBefore
+    res1_Got = res.stone - res1_Before
+    res2_Got = res.wood - res2_Before
+    res3_Got = res.tar - res3_Before
+    res4_Got = res.bronze - res4_Before
+    res5_Got = res.ki - res5_Before
+    poisonRune_Got = item.GetCount("poison rune") - poisonRune_Before
+    vigorRune_Got = item.GetCount("vigor rune") - vigorRune_Before
+    aetherRune_Got = item.GetCount("aether rune") - aetherRune_Before
+    fireRune_Got = item.GetCount("fire rune") - fireRune_Before
+    iceRune_Got  = item.GetCount("ice rune") - iceRune_Before
+	
+func Show_TextMode_Data()
+  area_Here = loc.stars + "[color=#FFD700]☆[/color]" + " " + loc.id + " [color=#6CA6D6][Round " + loopRound + "][/color]"
+  area_Screen = "面 " + screen.i
+
+  area_Time = "Time: " + time/30
+  ?item.right = blade | item.right = bardiche | item.right = skeleton_arm | item.right = heavy_hammer | item.right = quarterstaff
+    PPL_L_Equipment.text = " 雙 手 武 器"
+  :
+    PPL_L_Equipment.text =PPL_L_Name + "\n 攻擊 " + PPL_L_State2 + " 硬直 " + PPL_L_State3 + " 休息 " + PPL_L_State4
+  PPL_R_Equipment.text =PPL_R_Name + "\n 攻擊 " + PPL_R_State2 + " 硬直 " + PPL_R_State3 + " 休息 " + PPL_L_State4
+  PPL_Info_HP.text =  "HP " + hp + " / " + maxhp
+  PPL_Info_Armor.text = "護盾 " + armor + "."  + armor.f + " / " + maxarmor
+  MOB_Info_ID.text = " " + foe.id
+  MOB_Info_HP.text =  "HP " + foe.hp + " / " + foe.maxhp
+  MOB_Info_Armor.text = "護盾 " + foe.armor + " / " + foe.maxarmor
+  MOB_Info_ATK.text = "攻擊力: " + foe.damage
+  MOB_Info_Buff.text = "增益:\n" + foe.buffs.string
+  MOB_Info_Debuff.text = "減益:\n" + foe.debuffs.string
+
+  Area_Info_Data.text = area_Here  + " "+area_Screen +" " + area_Time + "  敵數量 " + foe.GetCount(138)
+
+  ? poisonRune_Got > 0
+    Area_Info_Rune1.text = "∞ " + item.GetCount("poison rune") + "([color=green]+" + poisonRune_Got + "[/color])"
+  :? poisonRune_Got < 0
+    Area_Info_Rune1.text  = "∞ " + item.GetCount("poison rune") + "([color=red]" + poisonRune_Got + "[/color])"
+	
+  ? vigorRune_Got > 0
+    Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=green]+" + vigorRune_Got + "[/color])"
+  :? vigorRune_Got < 0
+    Area_Info_Rune2.text = "♥ " + item.GetCount("vigor rune") + "([color=red]" + vigorRune_Got + "[/color])"
+
+  ? aetherRune_Got > 0
+    Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=green]+" + aetherRune_Got + "[/color])"
+  :? aetherRune_Got < 0
+    Area_Info_Rune3.text = "* " + item.GetCount("aether rune") + "([color=red]" + aetherRune_Got  + "[/color])"
+
+  ? fireRune_Got > 0
+    Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=green]+" + fireRune_Got + "[/color])"
+  :? fireRune_Got < 0
+    Area_Info_Rune4.text = "φ " + item.GetCount("fire rune") + "([color=red]" + fireRune_Got + "[/color])" 
+
+  ? iceRune_Got > 0
+    Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune") + "([color=green]+" + iceRune_Got + "[/color])"
+  :? iceRune_Got < 0
+    Area_Info_Rune5.text = "❄ " + item.GetCount("ice rune") + "([color=red]" + iceRune_Got + "[/color])"
+
+  ?res1_Got > 0
+    Area_Info_Res1.text = "石 " + res.stone + "([color=green]+" + res1_Got + "[/color])"
+  :?res1_Got < 0
+    Area_Info_Res1.text = "石 " + res.stone + "([color=red]" + res1_Got + "[/color])"
+
+  ?res2_Got > 0
+    Area_Info_Res2.text = "木 " + res.wood + "([color=green]+" + res2_Got + "[/color])"
+  :?res2_Got < 0
+    Area_Info_Res2.text = "木 " + res.wood + "([color=red]" + res2_Got + "[/color])"
+
+  ?res3_Got > 0
+    Area_Info_Res3.text = "油 " + res.tar + "([color=green]+" + res3_Got + "[/color])"
+  :?res3_Got < 0
+    Area_Info_Res3.text = "油 " + res.tar + "([color=red]" + res3_Got + "[/color])"
+
+  ?res4_Got > 0
+    Area_Info_Res4.text = "銅 " + res.bronze + "([color=green]+" + res4_Got +"[/color])"
+  :?res4_Got < 0
+    Area_Info_Res4.text = "銅 " + res.bronze + "([color=red]" + res4_Got +"[/color])"
+
+  ?res5_Got > 0
+    Area_Info_Res5.text = "氣 " + res.ki + "([color=green]+" + res5_Got + "[/color])"
+  :?res5_Got < 0
+    Area_Info_Res5.text = "氣 " + res.ki + "([color=red]" + res5_Got + "[/color])"
+
+  ?boxGot > 0
+    Area_Info_Box.text = "寶 " + boxNow + "/" + boxLimit + "([color=green]+" + boxGot + "[/color])"
+  :
+    Area_Info_Box.text = "寶 " + boxNow + "/" + boxLimit + "(+" + boxGot + ")"
+
+func CheckWeaponAttritube()
+
+  ?PPL_R_Name ! item.right
+    PPL_R_Name = item.right
+    PPL_R_State2 = 0
+    PPL_R_State3 = 0
+    PPL_R_State4 = 0
+
+  ?PPL_L_Name ! item.left
+    PPL_L_Name = item.left
+    PPL_L_State2 = 0
+    PPL_L_State3 = 0
+    PPL_L_State4 = 0
+
+  ?item.left.state = 2
+      ?item.left.time > PPL_L_State2
+        PPL_L_State2 = item.left.time
+  ?item.left.state = 3
+      ?item.left.time > PPL_L_State3
+        PPL_L_State3 = item.left.time
+  ?item.left.state = 4
+      ?item.left.time > PPL_L_State4
+        PPL_L_State4 = item.left.time
+  ?item.right.state = 2
+    ?item.right.time > PPL_R_State2
+      PPL_R_State2 = item.right.time
+  ?item.right.state = 3
+    ?item.right.time > PPL_R_State3
+      PPL_R_State3 = item.right.time
+  ?item.right.state = 4
+    ?item.right.time > PPL_R_State4
+      PPL_R_State4 = item.right.time
+
+
+
+
+
+
+//put this to build UI once and record resource
+?loc.begin | loc.loop
+  Build_TextMode()
+  TxtPanelMinMax()
+  CheckResource()
+  PPL_L_Name = item.left
+  PPL_R_Name = item.right
+  loopRound++
+
+
+
+//Main Loop
+CheckWeaponAttritube()
+Show_TextMode_Data()
