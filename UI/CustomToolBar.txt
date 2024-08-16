@@ -1,0 +1,124 @@
+func MakePanel(x, y, w, h, color, style)
+  var panel = ui.AddPanel()
+  panel.x = x
+  panel.y = y
+  panel.w = w
+  panel.h = h 
+  panel.anchor = top_left
+  panel.dock = top_left
+  ?color ! null
+    panel.color = color
+  ?style ! null
+    panel.style = style
+  return panel
+
+func MakeButton(x,y,w,h,text,tcolor,bcolor, 
+^style, onPressedFn)
+  var btn = ui.AddButton()
+  btn.x = x
+  btn.y = y
+  btn.w = w
+  btn.h = h
+  btn.anchor = top_left
+  btn.dock = top_left
+  ?text ! null
+    btn.text = text
+  :
+    btn.text = ""
+  ?tcolor ! null
+    btn.tcolor = tcolor
+  ?bcolor ! null
+    btn.bcolor = bcolor
+  ?style ! null
+    btn.style = style
+  ?onPressedFn ! null
+    btn.SetPressed(onPressedFn)
+  btn.visible = inherit
+  return btn
+func MakeText(x,y,w,h,color,align)
+  var txt = ui.AddText()
+  txt.x = x
+  txt.y = y
+  txt.w = w
+  txt.h = h
+  txt.anchor = top_left
+  txt.dock = top_left
+  txt.text = ""
+  ?color ! null
+    txt.color = color
+  ?align ! null
+    ?align = "L"
+      txt.align = left
+    :?align = "R"
+      txt.align = right
+    :?align = "C"
+      txt.align = center
+    :
+      txt.align = left
+  return txt
+
+var Tools_Panel
+var Tools_Btn_1
+var Tools_Btn_2
+var Tools_Btn_3
+var Tools_Btn_4
+var Tools_Btn_5
+var Tools_Btn_6
+var Tools_Btn_1_Text = ＂E＂
+var Tools_Btn_2_Text = ＂I＂
+var Tools_Btn_3_Text = ＂＂
+var Tools_Btn_4_Text = ＂◙＂
+var Tools_Btn_5_Text = ＂▶＂
+var Tools_Btn_6_Text = ＂＂
+
+// Build Tools Bar
+func Build_Tools()
+  Tools_Panel = MakePanel
+^(1,12,11,8,#8E0090,6)
+
+  Tools_Btn_1 = MakeButton
+^(1,1,3,3,Tools_Btn_1_Text,#888800,null,2,null)
+
+  Tools_Btn_2 = MakeButton
+^(4,1,3,3,Tools_Btn_2_Text,#888800,null,2,null)
+
+  Tools_Btn_3 = MakeButton
+^(7,1,3,3,Tools_Btn_3_Text,#888800,null,2,null)
+
+  Tools_Btn_4 = MakeButton
+^(1,4,3,3,Tools_Btn_4_Text,#888800,null,2,null)
+
+  Tools_Btn_5 = MakeButton
+^(4,4,3,3,Tools_Btn_5_Text,#888800,null,2,null)
+
+  Tools_Btn_6 = MakeButton
+^(7,4,3,3,Tools_Btn_6_Text,#888800,null,2,null)
+
+  Tools_Panel.Add(Tools_Btn_1)
+  Tools_Panel.Add(Tools_Btn_2)
+  Tools_Panel.Add(Tools_Btn_3)
+  Tools_Panel.Add(Tools_Btn_4)
+  Tools_Panel.Add(Tools_Btn_5)
+  Tools_Panel.Add(Tools_Btn_6)
+  Tools_Btn_1.SetPressed(onPress_ToolsButton)
+  Tools_Btn_2.SetPressed(onPress_ToolsButton)
+  Tools_Btn_3.SetPressed(onPress_ToolsButton)
+  Tools_Btn_4.SetPressed(onPress_ToolsButton)
+  Tools_Btn_5.SetPressed(onPress_ToolsButton)
+  Tools_Btn_6.SetPressed(onPress_ToolsButton)
+
+
+// Assign what button work
+func onPress_ToolsButton(btn)
+  ?btn = Tools_Btn_1
+    loc.Leave()
+  ?btn = Tools_Btn_2
+    ui.OpenInv()
+  ?btn = Tools_Btn_3
+    >o-6,4,#green,button3 pressed
+  ?btn = Tools_Btn_4
+    screen.ResetOffset()
+  ?btn = Tools_Btn_5
+    screen.Next()
+  ?btn = Tools_Btn_6
+    >o-6,4,#green,button6 pressed
