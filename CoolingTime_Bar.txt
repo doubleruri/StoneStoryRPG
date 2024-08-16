@@ -1,0 +1,183 @@
+// Custom position coolingdown timer
+// Usage :
+//   var CDTimer = import CoolingTime_Bar
+//   ?loc.begin | loc.loop
+//     CDTimer.Build_CoolingDown_Bar(X,Y) //X,Y = where you want to put,UL corner
+//
+// Put below at Main Loop
+//   CDTimer.Update_CDTime()
+//------Cooling Time bar------//
+var CDPanel
+var CDPanel_ShowTime
+var CDPanel_MinMax
+var CDPanel_MinMaxBtn
+var strMin = ＂［-］＂
+var strMax = ＂［+］＂
+var minimised = false
+var Text_Skill_List = ＂墮神 月牙 大錘 木棒 衝刺 閃避 骷髏＂
+var Text_Skill_List_Width = string.Size(Text_Skill_List)
+var CDPanel_MinW = 10
+var CDPanel_MaxW = Text_Skill_List_Width + 4
+var screenH = screen.H
+var CDPanel_Title
+var CDPanel_SkillList
+var CDPanel_ActList = ［
+Act_1,Act_2,Act_3,Act_4,Act_5,
+Act_6,Act_7
+］
+var Skill_SetfnList = ［
+skill_blade, skill_bardiche,
+skill_hammer, skill_quarterstaff,
+skill_dash, skill_mind,
+skill_skeleton_arm
+］
+var Skill_CDTimeList = ［
+CDPanel_CD_1,CDPanel_CD_2,
+CDPanel_CD_3,CDPanel_CD_4,
+CDPanel_CD_5,CDPanel_CD_6,
+CDPanel_CD_7
+］
+var Skill_CDNameList = ［
+＂blade＂, ＂bardiche＂,
+＂hammer＂, ＂quarterstaff＂,
+＂dash＂, ＂mind＂,
+＂skeleton_arm＂
+］
+var Tick_UpdateCD = 3
+
+
+
+func MakePanel(x, y, w, h, color, style)
+  var panel = ui.AddPanel()
+  panel.x = x
+  panel.y = y
+  panel.w = w
+  panel.h = h 
+  panel.anchor = top_left
+  panel.dock = top_left
+  ?color ! null
+    panel.color = color
+  ?style ! null
+    panel.style = style
+  return panel
+
+func MakeButton(x,y,w,h,text,tcolor,bcolor, 
+^style, onPressedFn)
+  var btn = ui.AddButton()
+  btn.x = x
+  btn.y = y
+  btn.w = w
+  btn.h = h
+  btn.anchor = top_left
+  btn.dock = top_left
+  ?text ! null
+    btn.text = text
+  :
+    btn.text = ＂＂
+  ?tcolor ! null
+    btn.tcolor = tcolor
+  ?bcolor ! null
+    btn.bcolor = bcolor
+  ?style ! null
+    btn.style = style
+  ?onPressedFn ! null
+    btn.SetPressed(onPressedFn)
+  btn.visible = inherit
+  return btn
+
+func MakeText(x,y,w,h,color,align)
+  var txt = ui.AddText()
+  txt.x = x
+  txt.y = y
+  txt.w = w
+  txt.h = h
+  txt.anchor = top_left
+  txt.dock = top_left
+  txt.text = ＂＂
+  ?color ! null
+    txt.color = color
+  ?align ! null
+    ?align = ＂L＂
+      txt.align = left
+    :?align = ＂R＂
+      txt.align = right
+    :?align = ＂C＂
+      txt.align = center
+    :
+      txt.align = left
+  return txt
+//----------------------------//
+//------Cooling Time bar------//
+
+func Build_CoolingDown_Bar(PosX,PosY)
+  CDPanel = MakePanel(PosX,PosY,24,4,#D35400,4)
+  CDPanel.clip = true
+  CDPanel_ShowTime = MakePanel(2,1,20,2,#D35400,0)  
+
+  CDPanel_MinMaxBtn = MakeButton(PosX+1,PosY,3,1,strMin,#9FE2BF,#000000,1,MinMax_CDPanel) 
+  CDPanel_Title = MakeText(PosX+4,PosY,14,1,#880000,L)
+  CDPanel_Title.text = ＂［Cooling Down］＂  
+  CDPanel_SkillList = MakeText(0,0,20,1,#white,L)
+  CDPanel_SkillList.text = Text_Skill_List
+  var xn = 0
+  for i = 0..CDPanel_ActList.Count() -1
+    CDPanel_ActList［i］ = MakeButton(xn,0,2,2,null,null,#ABB2B9,1,Skill_SetfnList［i］)
+    Skill_CDTimeList［i］ = MakeText(xn,1,2,1,null,R)
+    CDPanel_ShowTime.Add(CDPanel_ActList［i］)
+    CDPanel_ShowTime.Add(Skill_CDTimeList［i］)
+    xn = xn + 3
+  CDPanel.Add(CDPanel_ShowTime)
+  CDPanel_ShowTime.Add(CDPanel_SkillList)
+
+func MinMax_CDPanel()
+  minimised = !minimised
+  ?minimised = false
+    CDPanel.visible = true
+    CDPanel_MinMaxBtn.text = strMin
+    CDPanel_Title.text = ＂［Cooling Down］＂
+  ?minimised = true
+   CDPanel.visible = false
+    CDPanel_MinMaxBtn.text = strMax
+    CDPanel_Title.text = ＂［CD］＂
+
+// Btn Call Function //
+
+func skill_blade()
+  ?item.GetCooldown(＂blade＂) <= 0
+    equip blade
+    activate R
+
+func skill_bardiche()
+  ?item.GetCooldown(＂bardiche＂) <= 0 & item.CanActivate()
+    equip bardiche
+    activate R
+
+func skill_hammer()
+  ?item.GetCooldown(＂hammer＂) <= 0
+    equip Heavy Hammer
+    activate R
+
+func skill_quarterstaff()
+  ?item.GetCooldown(＂quarterstaff＂) <= 0
+    equip quarterstaff
+    activate R
+
+func skill_dash()
+  ?item.GetCooldown(＂dash＂) <= 0
+    equipR dash
+
+func skill_mind()
+  ?item.GetCooldown(＂mind＂) <= 0
+    equipR mind
+
+func skill_skeleton_arm()
+  ?item.GetCooldown(＂skeleton_arm＂) <= 0
+    equip skeleton_arm
+    activate R
+
+func Update_CDTime()
+  Tick_UpdateCD = Tick_UpdateCD - 1
+  ?Tick_UpdateCD = 0
+    Tick_UpdateCD = 3
+    for i = 0..Skill_CDNameList.Count()-1
+      Skill_CDTimeList［i］.text =item.GetCooldown(Skill_CDNameList［i］)/30 + ＂＂
