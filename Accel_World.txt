@@ -1,0 +1,20 @@
+var Equip_L
+var Equip_R
+var Twohand = [
+"blade_of_god","skeleton_arm","bardiche","heavy_hammer",
+"quarterstaff","socketed_staff",
+"heavy_crossbow","socketed_crossbow","repeating_crossbow",
+"shovel"]
+
+func Accel_World()
+  ?item.right.state = 3
+    Equip_R = item.right
+    equipR star
+    ?Twohand.Contains(string.Split(item.right.id,"_lv")[0])
+      equip @Equip_R@
+    :
+      equipR @Equip_R@
+  ?item.left.state = 3
+    Equip_L = item.left
+    equipL star
+    equipL @Equip_L@
