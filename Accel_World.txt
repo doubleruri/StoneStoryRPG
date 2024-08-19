@@ -9,12 +9,12 @@ var Twohand = [
 func Accel_World()
   ?item.right.state = 3
     Equip_R = item.right
-    equipR star
+    equipR shield*0
     ?Twohand.Contains(string.Split(item.right.id,"_lv")[0])
       equip @Equip_R@
     :
       equipR @Equip_R@
   ?item.left.state = 3
     Equip_L = item.left
-    equipL star
+    equipL wand*0
     equipL @Equip_L@
