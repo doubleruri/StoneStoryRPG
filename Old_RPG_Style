@@ -120,7 +120,7 @@ var Area_Info_Rune3
 var Area_Info_Rune4
 var Area_Info_Rune5
 var Area_Info_Box
-var area_Here
+var area_Here = loc.stars + "[color=#FFD700]☆[/color]" + " " + loc.id + " [color=#6CA6D6][Round " + loopRound + "][/color]"
 var area_Screen
 var area_Time
 var area_Resourse
@@ -281,10 +281,9 @@ func CheckResource()
     iceRune_Got  = item.GetCount("ice rune") - iceRune_Before
 	
 func Show_TextMode_Data()
-  area_Here = loc.stars + "[color=#FFD700]☆[/color]" + " " + loc.id + " [color=#6CA6D6][Round " + loopRound + "][/color]"
   area_Screen = "面 " + screen.i
-
   area_Time = "Time: " + time/30
+
   ?item.right = blade | item.right = bardiche | item.right = skeleton_arm | item.right = heavy_hammer | item.right = quarterstaff
     PPL_L_Equipment.text = " 雙 手 武 器"
   :
