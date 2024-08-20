@@ -128,28 +128,28 @@ var area_TotalResourse
 var boxNow
 var boxLimit
 var boxGot = 0
-var boxBefore
-var res1_Before
-var res2_Before
-var res3_Before
-var res4_Before
-var res5_Before
+var boxBefore = item.GetTreasureCount()
+var res1_Before = res.stone
+var res2_Before = res.wood
+var res3_Before = res.tar
+var res4_Before = res.bronze
+var res5_Before = res.ki
+
 var res1_Got = 0
 var res2_Got = 0
 var res3_Got = 0
 var res4_Got = 0
 var res5_Got = 0
-var poisonRune_Before
-var vigorRune_Before
-var aetherRune_Before
-var fireRune_Before
-var iceRune_Before
+var poisonRune_Before  = item.GetCount("poison rune")
+var vigorRune_Before = item.GetCount("vigor rune")
+var aetherRune_Before  = item.GetCount("aether rune")
+var fireRune_Before = item.GetCount("fire rune")
+var iceRune_Before = item.GetCount("ice rune")
 var poisonRune_Got = 0
 var vigorRune_Got = 0
 var aetherRune_Got = 0
 var fireRune_Got = 0
 var iceRune_Got = 0
-var resourceRecord = false
 var loopRound = 0
 
 func Build_TextMode()
@@ -266,22 +266,6 @@ func TxtPanelMinMax()
 
 
 func CheckResource()
-  ?resourceRecord = false
-    boxBefore = item.GetTreasureCount()
-    boxNow = item.GetTreasureCount()
-    boxLimit = item.GetTreasureLimit()
-    res1_Before = res.stone
-    res2_Before = res.wood
-    res3_Before = res.tar
-    res4_Before = res.bronze
-    res5_Before = res.ki
-    poisonRune_Before = item.GetCount("poison rune")
-    vigorRune_Before = item.GetCount("vigor rune")
-    aetherRune_Before = item.GetCount("aether rune")
-    fireRune_Before = item.GetCount("fire rune")
-    iceRune_Before  = item.GetCount("ice rune")
-    resourceRecord = true
-  :
     boxNow = item.GetTreasureCount()
     boxLimit = item.GetTreasureLimit()
     boxGot = boxNow - boxBefore
